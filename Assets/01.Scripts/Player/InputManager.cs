@@ -6,6 +6,7 @@ public class InputManager : MonoBehaviour
     [field: SerializeField] public Vector2 MoveInputVec {  get; private set; }
     [field: SerializeField] public Vector2 LookInputVec {  get; private set; }
     [field: SerializeField] public bool isInputJump { get; private set; }
+    [field: SerializeField] public bool isInputSprint { get; private set; }
 
     private void OnMove(InputValue value)
     {
@@ -21,6 +22,12 @@ public class InputManager : MonoBehaviour
     {
         SetJumpState(value.isPressed);
     }
+    
+    private void OnSprint(InputValue value)
+    {
+        isInputSprint = value.isPressed;
+    }
+
 
     public void SetJumpState(bool state)
     {
