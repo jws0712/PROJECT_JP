@@ -72,11 +72,18 @@ public class NPC : MonoBehaviour
             GetRestrained();
             Debug.Log("묶임");
         }
+        else if (Keyboard.current.rKey.isPressed)
+        {
+            GetPanicked();
+            Debug.Log("공포");
+        }
     }
 
     public void SetState(NPCState newState)
     {
         currentState = newState;
+        animator.SetBool("isPanicked", false);
+        animator.SetBool("isRestrained", false);
 
         if(newState == NPCState.Restrained || newState == NPCState.Panicked)
         {
@@ -88,6 +95,7 @@ public class NPC : MonoBehaviour
         }
 
         // 애니메이터 파라미터 업데이트
+        animator.SetFloat("Speed", agent.velocity.magnitude);
     }
 
     // 산책
@@ -109,11 +117,19 @@ public class NPC : MonoBehaviour
         agent.SetDestination(runTo);
     }
 
+    public void GetPanicked()
+    {
+        SetState(NPCState.Panicked);
+        // 공포에 질림
+        animator.SetBool("isPanicked", true);
+    }
+
     public void GetRestrained()
     {
         SetState(NPCState.Restrained);
         //agent.enabled = false;
         // 손이 묶이 모델 활성화
+        animator.SetBool("isRestrained", true);
     }
 
     private void GoToNextWaypoint()
