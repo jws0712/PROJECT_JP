@@ -1,4 +1,3 @@
-using System.Buffers;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -23,10 +22,14 @@ public class Player : MonoBehaviour
     private float animBlend;
 
     private bool isGrounded;
+    [SerializeField] private bool canCombo;
+    private bool isAttack;
 
     private CharacterController controller;
     private CameraController cameraController;
     private InputManager input;
+    [SerializeField] private Animator fpAnim;
+    [SerializeField] private Animator tpAnim;
 
     private void Awake()
     {
@@ -37,21 +40,25 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-
+        canCombo = true;
     }
 
     private void Update()
     {
+        fpAnim.SetBool("IsMove", input.MoveInputVec == Vector2.zero? false : true);
+        tpAnim.SetBool("IsMove", input.MoveInputVec == Vector2.zero? false : true);
+
         MakeGravity();
 
         CheckGround();
         Move();
         Jump();
+        Attack();
     }
 
     private void Move()
     {
-        float targetSpeed = input.isInputSprint ? sprintSpeed : moveSpeed;
+        float targetSpeed = input.isPressSprint ? sprintSpeed : moveSpeed;
 
         if (input.MoveInputVec == Vector2.zero) targetSpeed = 0f; //캐릭터 정지
 
@@ -89,7 +96,7 @@ public class Player : MonoBehaviour
                 verticalVelocity = gravity;
             }
 
-            if(input.isInputJump)
+            if(input.isPressJump)
             {
                 verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity); //점프
             }
@@ -97,6 +104,20 @@ public class Player : MonoBehaviour
         else
         {
             input.SetJumpState(false);
+        }
+    }
+
+    private void Attack()
+    {
+        if(input.isPressAttack)
+        {
+            input.SetAttackState(false);
+
+            if(canCombo)
+            {
+                fpAnim.SetTrigger("Attack");
+                tpAnim.SetTrigger("Attack");
+            }
         }
     }
 
@@ -109,6 +130,21 @@ public class Player : MonoBehaviour
     private void CheckGround()
     {
         isGrounded = Physics.CheckSphere(groundedCheckTr.position, groundedCheckRadius, groundLayer, QueryTriggerInteraction.Ignore);
+    }
+
+    public void EnableCombo()
+    {
+        canCombo = true;
+    }
+
+    public void UnEnableCombo()
+    {
+        canCombo = false;
+    }
+
+    public void SetAttackSatate(bool state)
+    {
+        isAttack = state;
     }
 
     private void OnDrawGizmos()
