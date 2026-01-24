@@ -2,14 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
 
-public enum NPCState
-{
-    Idle,       // 서 있음
-    Patrol,     // 산책
-    Panicked,   // 공포
-    Fleeing,    // 도망
-    Restrained  // 결박됨 (움직임 불가)
-}
+
 
 public class NPC : MonoBehaviour
 {
